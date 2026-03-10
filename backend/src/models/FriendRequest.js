@@ -19,10 +19,10 @@ const friendRequestSchema = new mongoose.Schema(
     },
   },
   {
-    timestamps: true, // Automatically manage createdAt and updatedAt fields
+    timestamps: true,
   }
 );
 
-const FriendRequests = mongoose.model("FriendRequest", friendRequestSchema);
+const FriendRequest = mongoose.model("FriendRequest", friendRequestSchema);
 
-export default FriendRequests; 
+export default FriendRequest;
