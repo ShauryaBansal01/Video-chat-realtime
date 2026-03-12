@@ -19,6 +19,8 @@ import toast from "react-hot-toast";
 import ChatLoader from "../components/ChatLoader";
 import CallButton from "../components/CallButton";
 
+import "stream-chat-react/dist/css/v2/index.css";
+
 const STREAM_API_KEY = import.meta.env.VITE_STREAM_API_KEY;
 
 const ChatPage = () => {
@@ -33,7 +35,8 @@ const ChatPage = () => {
   const { data: tokenData } = useQuery({
     queryKey: ["streamToken"],
     queryFn: getStreamToken,
-    enabled: !!authUser, // this will run only when authUser is available
+    enabled: !!authUser,
+    staleTime: 0, // always refetch to ensure users are synced to Stream
   });
 
   useEffect(() => {

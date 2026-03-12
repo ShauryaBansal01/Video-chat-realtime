@@ -1,3 +1,380 @@
+@import "stream-chat-react/dist/css/v2/index.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* ==========================================================
+   Stream Chat — DaisyUI Theme Integration
+   All colors use oklch(var(--XX)) to automatically adapt
+   to ANY DaisyUI theme (dark or light).
+   ========================================================== */
+
+/* ---- Root CSS Variable Overrides ---- */
+.str-chat {
+  --str-chat__font-family: inherit;
+
+  /* Map Stream's color system to DaisyUI theme tokens */
+  --str-chat__primary-color: oklch(var(--p));
+  --str-chat__active-primary-color: oklch(var(--pf, var(--p)));
+  --str-chat__primary-color-low-emphasis: oklch(var(--p) / 0.15);
+
+  --str-chat__text-color: oklch(var(--bc));
+  --str-chat__text-low-emphasis-color: oklch(var(--bc) / 0.5);
+  --str-chat__disabled-color: oklch(var(--bc) / 0.3);
+  --str-chat__cta-color: oklch(var(--p));
+
+  --str-chat__background-color: oklch(var(--b1));
+  --str-chat__secondary-background-color: oklch(var(--b2));
+  --str-chat__surface-color: oklch(var(--b1));
+  --str-chat__secondary-surface-color: oklch(var(--b2));
+  --str-chat__primary-surface-color: oklch(var(--b1));
+  --str-chat__primary-surface-color-low-emphasis: oklch(var(--b2));
+  --str-chat__border-color: oklch(var(--bc) / 0.1);
+  --str-chat__message-highlight-color: oklch(var(--p) / 0.08);
+
+  --str-chat__danger-color: oklch(var(--er, 0.7 0.15 25));
+  --str-chat__avatar-border-radius: 50%;
+  --str-chat__border-radius-circle: 50%;
+  --str-chat__border-radius-sm: 0.5rem;
+  --str-chat__border-radius-md: 1rem;
+  --str-chat__border-radius-lg: 1.25rem;
+}
+
+/* ---- Overall Containers ---- */
+.str-chat,
+.str-chat__container,
+.str-chat__main-panel,
+.str-chat-channel,
+.str-chat__channel {
+  background-color: oklch(var(--b1)) !important;
+  color: oklch(var(--bc));
+}
+
+/* ---- Channel Header ---- */
+.str-chat__channel-header {
+  background: oklch(var(--b2)) !important;
+  color: oklch(var(--bc));
+  border-bottom: 1px solid oklch(var(--bc) / 0.08);
+  padding: 10px 16px;
+  min-height: 60px;
+  box-shadow: 0 1px 3px oklch(var(--bc) / 0.05);
+}
+
+.str-chat__header-livestream-left--title {
+  font-weight: 700 !important;
+  font-size: 1rem;
+  color: oklch(var(--bc)) !important;
+}
+
+.str-chat__header-livestream-left--members {
+  font-size: 0.8rem;
+  color: oklch(var(--bc) / 0.5) !important;
+}
+
+.str-chat__header-livestream-left .str-chat__avatar {
+  border: 2px solid oklch(var(--p) / 0.3);
+}
+
+/* ---- Message List ---- */
+.str-chat__list {
+  background: oklch(var(--b1)) !important;
+  padding: 16px 0;
+}
+
+.str-chat__virtual-list {
+  background: oklch(var(--b1)) !important;
+}
+
+/* ---- Message Bubbles — Incoming ---- */
+.str-chat__message-simple {
+  font-size: 0.925rem;
+}
+
+.str-chat__message--other .str-chat__message-bubble {
+  background: oklch(var(--b2)) !important;
+  color: oklch(var(--bc)) !important;
+  border-radius: 4px 18px 18px 18px;
+  border: 1px solid oklch(var(--bc) / 0.06);
+}
+
+.str-chat__message--other .str-chat__message-simple-text-inner {
+  color: oklch(var(--bc)) !important;
+}
+
+.str-chat__message--other .str-chat__message-simple-text-inner a {
+  color: oklch(var(--p)) !important;
+}
+
+/* ---- Message Bubbles — Outgoing ---- */
+.str-chat__message--me .str-chat__message-bubble {
+  background: oklch(var(--p)) !important;
+  color: oklch(var(--pc)) !important;
+  border-radius: 18px 18px 4px 18px;
+  box-shadow: 0 2px 8px oklch(var(--p) / 0.2);
+}
+
+.str-chat__message--me .str-chat__message-simple-text-inner {
+  color: oklch(var(--pc)) !important;
+}
+
+.str-chat__message--me .str-chat__message-simple-text-inner a {
+  color: oklch(var(--pc)) !important;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* ---- Avatars ---- */
+.str-chat__avatar {
+  border-radius: 50% !important;
+  flex-shrink: 0;
+}
+
+.str-chat__avatar-image {
+  border-radius: 50% !important;
+  object-fit: cover;
+}
+
+.str-chat__avatar-fallback {
+  border-radius: 50% !important;
+  background: oklch(var(--p) / 0.2) !important;
+  color: oklch(var(--p)) !important;
+  font-weight: 700;
+}
+
+/* ---- Message Metadata ---- */
+.str-chat__message-data {
+  color: oklch(var(--bc) / 0.4) !important;
+  font-size: 0.72rem;
+}
+
+.str-chat__message-simple-name {
+  color: oklch(var(--bc) / 0.6) !important;
+  font-weight: 600;
+  font-size: 0.78rem;
+}
+
+/* ---- Date Separator ---- */
+.str-chat__date-separator {
+  padding: 20px 0 12px;
+}
+
+.str-chat__date-separator-date {
+  color: oklch(var(--bc) / 0.45) !important;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: oklch(var(--b1)) !important;
+  padding: 4px 14px;
+  border-radius: 999px;
+}
+
+.str-chat__date-separator-line {
+  background: oklch(var(--bc) / 0.08) !important;
+}
+
+/* ---- Message Input ---- */
+.str-chat__message-input {
+  background: oklch(var(--b2)) !important;
+  border-top: 1px solid oklch(var(--bc) / 0.08);
+  padding: 12px 16px;
+}
+
+.str-chat__input-flat {
+  background: oklch(var(--b1)) !important;
+  border: 1px solid oklch(var(--bc) / 0.12) !important;
+  border-radius: 24px !important;
+  padding: 8px 16px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.str-chat__input-flat:focus-within {
+  border-color: oklch(var(--p) / 0.5) !important;
+  box-shadow: 0 0 0 3px oklch(var(--p) / 0.12) !important;
+}
+
+.str-chat__input-flat textarea {
+  background: transparent !important;
+  color: oklch(var(--bc)) !important;
+  font-size: 0.925rem;
+}
+
+.str-chat__input-flat textarea::placeholder {
+  color: oklch(var(--bc) / 0.35) !important;
+}
+
+/* Send button */
+.str-chat__send-button {
+  color: oklch(var(--p)) !important;
+  transition: transform 0.15s ease, color 0.15s ease;
+}
+
+.str-chat__send-button:hover {
+  color: oklch(var(--pf, var(--p))) !important;
+  transform: scale(1.1);
+}
+
+/* Attachment / action buttons in input */
+.str-chat__input-flat-emojiselect,
+.str-chat__file-input-container {
+  color: oklch(var(--bc) / 0.4) !important;
+}
+
+.str-chat__input-flat-emojiselect:hover,
+.str-chat__file-input-container:hover {
+  color: oklch(var(--p)) !important;
+}
+
+/* ---- Message Actions Popup ---- */
+.str-chat__message-actions-box {
+  background: oklch(var(--b2)) !important;
+  border: 1px solid oklch(var(--bc) / 0.1);
+  border-radius: 12px;
+  box-shadow: 0 8px 24px oklch(var(--bc) / 0.15);
+}
+
+.str-chat__message-actions-list-item-button {
+  color: oklch(var(--bc)) !important;
+}
+
+.str-chat__message-actions-list-item-button:hover {
+  background: oklch(var(--b3, var(--b1))) !important;
+  color: oklch(var(--p)) !important;
+}
+
+/* ---- Reactions ---- */
+.str-chat__message-reactions-list-item__button {
+  background: oklch(var(--b2)) !important;
+  border: 1px solid oklch(var(--bc) / 0.08);
+  border-radius: 999px;
+}
+
+.str-chat__message-reactions-list-item__button:hover {
+  background: oklch(var(--b3, var(--b2))) !important;
+}
+
+/* ---- Reply / Thread ---- */
+.str-chat__message-replies-count-button {
+  color: oklch(var(--p)) !important;
+  font-weight: 600;
+  font-size: 0.78rem;
+}
+
+.str-chat__message-replies-count-button:hover {
+  color: oklch(var(--pf, var(--p))) !important;
+  text-decoration: underline;
+}
+
+.str-chat__thread {
+  background: oklch(var(--b1)) !important;
+  border-left: 1px solid oklch(var(--bc) / 0.08);
+}
+
+.str-chat__thread-header {
+  background: oklch(var(--b2)) !important;
+  border-bottom: 1px solid oklch(var(--bc) / 0.08);
+  color: oklch(var(--bc)) !important;
+}
+
+/* ---- New Messages Notification ---- */
+.str-chat__unread-messages-notification {
+  background: oklch(var(--p)) !important;
+  color: oklch(var(--pc)) !important;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  box-shadow: 0 4px 12px oklch(var(--p) / 0.3);
+}
+
+/* ---- Message Status (sent/delivered) ---- */
+.str-chat__message-simple-status {
+  color: oklch(var(--p)) !important;
+}
+
+/* ---- Quoted Messages ---- */
+.str-chat__quoted-message-preview {
+  background: oklch(var(--b2)) !important;
+  border-left: 3px solid oklch(var(--p));
+  border-radius: 4px;
+}
+
+/* ---- Attachments / Images ---- */
+.str-chat__message-attachment--image {
+  border-radius: 12px;
+  overflow: hidden;
+  max-width: 280px;
+}
+
+.str-chat__message-attachment--image img {
+  border-radius: 12px;
+}
+
+/* ---- Typing Indicator ---- */
+.str-chat__typing-indicator {
+  color: oklch(var(--bc) / 0.45) !important;
+  font-size: 0.78rem;
+}
+
+/* ---- Loading States ---- */
+.str-chat__loading-channel {
+  background: oklch(var(--b1)) !important;
+}
+
+.str-chat__loading-indicator {
+  color: oklch(var(--p)) !important;
+}
+
+/* ---- Tooltips ---- */
+.str-chat__tooltip {
+  background: oklch(var(--b2)) !important;
+  color: oklch(var(--bc)) !important;
+  border: 1px solid oklch(var(--bc) / 0.1);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px oklch(var(--bc) / 0.15);
+}
+
+/* ---- Custom Scrollbar ---- */
+.str-chat__list::-webkit-scrollbar {
+  width: 5px;
+}
+
+.str-chat__list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.str-chat__list::-webkit-scrollbar-thumb {
+  background: oklch(var(--bc) / 0.12);
+  border-radius: 10px;
+}
+
+.str-chat__list::-webkit-scrollbar-thumb:hover {
+  background: oklch(var(--bc) / 0.25);
+}
+
+/* ---- Emoji Picker ---- */
+.str-chat__emoji-picker-container {
+  z-index: 100;
+}
+
+/* ---- Empty State ---- */
+.str-chat__channel-empty-indicator {
+  color: oklch(var(--bc) / 0.5) !important;
+}
+
+/* ---- Mobile Responsive ---- */
+@media (max-width: 768px) {
+  .str-chat__input-flat {
+    border-radius: 20px !important;
+    padding: 6px 12px;
+  }
+
+  .str-chat__message-attachment--image {
+    max-width: 200px;
+  }
+
+  .str-chat__channel-header {
+    padding: 8px 12px;
+    min-height: 52px;
+  }
+}
