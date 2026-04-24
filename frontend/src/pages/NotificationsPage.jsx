@@ -1,7 +1,14 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  BellIcon,
+  Clock3Icon,
+  MessageSquareHeartIcon,
+  UserCheckIcon,
+} from "lucide-react";
 import { acceptFriendRequest, getFriendRequests } from "../lib/api";
-import { BellIcon, ClockIcon, MessageSquareIcon, UserCheckIcon } from "lucide-react";
 import NoNotificationsFound from "../components/NoNotificationsFound";
+import PageShell from "../components/PageShell";
+import SectionHeader from "../components/SectionHeader";
 
 const NotificationsPage = () => {
   const queryClient = useQueryClient();
@@ -23,112 +30,124 @@ const NotificationsPage = () => {
   const acceptedRequests = friendRequests?.acceptedReqs || [];
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8">
-      <div className="container mx-auto max-w-4xl space-y-8">
-        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight mb-6">Notifications</h1>
+    <PageShell
+      eyebrow="Activity inbox"
+      title="Keep up with the people reaching for conversation."
+      description="Every invite, new connection, and moment of momentum lands here so you can keep your language exchange moving."
+    >
+      {isLoading ? (
+        <div className="editorial-card flex justify-center px-6 py-16">
+          <span className="loading loading-spinner loading-lg text-primary" />
+        </div>
+      ) : (
+        <div className="space-y-8">
+          {incomingRequests.length > 0 ? (
+            <section className="space-y-5">
+              <SectionHeader
+                eyebrow="Pending"
+                title="Friend requests"
+                description="People who want to start practicing with you."
+                action={
+                  <div className="pill-badge">
+                    <UserCheckIcon className="size-4 text-primary" />
+                    {incomingRequests.length} waiting
+                  </div>
+                }
+              />
 
-        {isLoading ? (
-          <div className="flex justify-center py-12">
-            <span className="loading loading-spinner loading-lg"></span>
-          </div>
-        ) : (
-          <>
-            {incomingRequests.length > 0 && (
-              <section className="space-y-4">
-                <h2 className="text-xl font-semibold flex items-center gap-2">
-                  <UserCheckIcon className="h-5 w-5 text-primary" />
-                  Friend Requests
-                  <span className="badge badge-primary ml-2">{incomingRequests.length}</span>
-                </h2>
+              <div className="grid gap-4">
+                {incomingRequests.map((request) => (
+                  <article
+                    key={request._id}
+                    className="editorial-card flex flex-col gap-5 p-5 md:flex-row md:items-center md:justify-between"
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className="avatar size-16">
+                        <img src={request.sender.profilePic} alt={request.sender.fullName} />
+                      </div>
+                      <div>
+                        <h3 className="font-display text-3xl leading-none">
+                          {request.sender.fullName}
+                        </h3>
+                        <div className="mt-3 flex flex-wrap gap-2">
+                          <span className="pill-badge">Native: {request.sender.nativeLanguage}</span>
+                          <span className="pill-badge">
+                            Learning: {request.sender.learningLanguage}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
 
-                <div className="space-y-3">
-                  {incomingRequests.map((request) => (
-                    <div
-                      key={request._id}
-                      className="card bg-base-200 shadow-sm hover:shadow-md transition-shadow"
+                    <button
+                      className="btn btn-primary rounded-full px-6"
+                      onClick={() => acceptRequestMutation(request._id)}
+                      disabled={isPending}
                     >
-                      <div className="card-body p-4">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-3">
-                            <div className="avatar w-14 h-14 rounded-full bg-base-300">
-                              <img src={request.sender.profilePic} alt={request.sender.fullName} />
-                            </div>
-                            <div>
-                              <h3 className="font-semibold">{request.sender.fullName}</h3>
-                              <div className="flex flex-wrap gap-1.5 mt-1">
-                                <span className="badge badge-secondary badge-sm">
-                                  Native: {request.sender.nativeLanguage}
-                                </span>
-                                <span className="badge badge-outline badge-sm">
-                                  Learning: {request.sender.learningLanguage}
-                                </span>
-                              </div>
-                            </div>
-                          </div>
+                      Accept request
+                    </button>
+                  </article>
+                ))}
+              </div>
+            </section>
+          ) : null}
 
-                          <button
-                            className="btn btn-primary btn-sm"
-                            onClick={() => acceptRequestMutation(request._id)}
-                            disabled={isPending}
-                          >
-                            Accept
-                          </button>
+          {acceptedRequests.length > 0 ? (
+            <section className="space-y-5">
+              <SectionHeader
+                eyebrow="New connections"
+                title="Recently accepted"
+                description="Warm starts for conversations that just opened up."
+                action={
+                  <div className="pill-badge">
+                    <BellIcon className="size-4 text-secondary" />
+                    Fresh activity
+                  </div>
+                }
+              />
+
+              <div className="grid gap-4">
+                {acceptedRequests.map((notification) => (
+                  <article
+                    key={notification._id}
+                    className="editorial-card flex flex-col gap-4 p-5 md:flex-row md:items-center md:justify-between"
+                  >
+                    <div className="flex items-start gap-4">
+                      <div className="avatar size-14">
+                        <img
+                          src={notification.recipient.profilePic}
+                          alt={notification.recipient.fullName}
+                        />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-lg">{notification.recipient.fullName}</h3>
+                        <p className="mt-1 text-sm leading-7 text-base-content/68">
+                          {notification.recipient.fullName} accepted your request. Your next great
+                          conversation can start now.
+                        </p>
+                        <div className="mt-3 flex items-center gap-3 text-xs uppercase tracking-[0.24em] text-base-content/45">
+                          <Clock3Icon className="size-4" />
+                          Recently
                         </div>
                       </div>
                     </div>
-                  ))}
-                </div>
-              </section>
-            )}
 
-            {/* ACCEPTED REQS NOTIFICATONS */}
-            {acceptedRequests.length > 0 && (
-              <section className="space-y-4">
-                <h2 className="text-xl font-semibold flex items-center gap-2">
-                  <BellIcon className="h-5 w-5 text-success" />
-                  New Connections
-                </h2>
-
-                <div className="space-y-3">
-                  {acceptedRequests.map((notification) => (
-                    <div key={notification._id} className="card bg-base-200 shadow-sm">
-                      <div className="card-body p-4">
-                        <div className="flex items-start gap-3">
-                          <div className="avatar mt-1 size-10 rounded-full">
-                            <img
-                              src={notification.recipient.profilePic}
-                              alt={notification.recipient.fullName}
-                            />
-                          </div>
-                          <div className="flex-1">
-                            <h3 className="font-semibold">{notification.recipient.fullName}</h3>
-                            <p className="text-sm my-1">
-                              {notification.recipient.fullName} accepted your friend request
-                            </p>
-                            <p className="text-xs flex items-center opacity-70">
-                              <ClockIcon className="h-3 w-3 mr-1" />
-                              Recently
-                            </p>
-                          </div>
-                          <div className="badge badge-success">
-                            <MessageSquareIcon className="h-3 w-3 mr-1" />
-                            New Friend
-                          </div>
-                        </div>
-                      </div>
+                    <div className="pill-badge">
+                      <MessageSquareHeartIcon className="size-4 text-primary" />
+                      New friend
                     </div>
-                  ))}
-                </div>
-              </section>
-            )}
+                  </article>
+                ))}
+              </div>
+            </section>
+          ) : null}
 
-            {incomingRequests.length === 0 && acceptedRequests.length === 0 && (
-              <NoNotificationsFound />
-            )}
-          </>
-        )}
-      </div>
-    </div>
+          {incomingRequests.length === 0 && acceptedRequests.length === 0 ? (
+            <NoNotificationsFound />
+          ) : null}
+        </div>
+      )}
+    </PageShell>
   );
 };
+
 export default NotificationsPage;

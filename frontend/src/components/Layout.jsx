@@ -3,14 +3,14 @@ import Navbar from "./Navbar";
 
 const Layout = ({ children, showSidebar = false }) => {
   return (
-    <div className="min-h-screen">
-      <div className="flex">
+    <div className="app-frame">
+      <div className="relative flex min-h-screen">
         {showSidebar && <Sidebar />}
 
-        <div className="flex-1 flex flex-col">
+        <div className="flex min-w-0 flex-1 flex-col">
           <Navbar />
 
-          <main className="flex-1 overflow-y-auto">{children}</main>
+          <main className="shell-main">{children}</main>
         </div>
       </div>
     </div>

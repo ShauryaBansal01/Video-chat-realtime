@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { ShipWheelIcon } from "lucide-react";
 import { Link } from "react-router";
-
+import { HeartHandshakeIcon, SparklesIcon } from "lucide-react";
 import useSignUp from "../hooks/useSignUp";
+import BrandMark from "../components/BrandMark";
 
 const SignUpPage = () => {
   const [signupData, setSignupData] = useState({
@@ -11,18 +11,6 @@ const SignUpPage = () => {
     password: "",
   });
 
-  // This is how we did it at first, without using our custom hook
-  // const queryClient = useQueryClient();
-  // const {
-  //   mutate: signupMutation,
-  //   isPending,
-  //   error,
-  // } = useMutation({
-  //   mutationFn: signup,
-  //   onSuccess: () => queryClient.invalidateQueries({ queryKey: ["authUser"] }),
-  // });
-
-  // This is how we did it using our custom hook - optimized version
   const { isPending, error, signupMutation } = useSignUp();
 
   const handleSignup = (e) => {
@@ -31,137 +19,123 @@ const SignUpPage = () => {
   };
 
   return (
-    <div
-      className="h-screen flex items-center justify-center p-4 sm:p-6 md:p-8"
-      data-theme="forest"
-    >
-      <div className="border border-primary/25 flex flex-col lg:flex-row w-full max-w-5xl mx-auto bg-base-100 rounded-xl shadow-lg overflow-hidden">
-        {/* SIGNUP FORM - LEFT SIDE */}
-        <div className="w-full lg:w-1/2 p-4 sm:p-8 flex flex-col">
-          {/* LOGO */}
-          <div className="mb-4 flex items-center justify-start gap-2">
-            <ShipWheelIcon className="size-9 text-primary" />
-            <span className="text-3xl font-bold font-mono bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary tracking-wider">
-              Streamify
-            </span>
-          </div>
+    <div className="auth-shell" data-theme="streamify_daybreak">
+      <div className="auth-card animate-rise">
+        <section className="auth-editorial-side">
+          <div className="relative z-10 flex h-full flex-col justify-between p-10 xl:p-12">
+            <BrandMark />
 
-          {/* ERROR MESSAGE IF ANY */}
-          {error && (
-            <div className="alert alert-error mb-4">
-              <span>{error.response.data.message}</span>
-            </div>
-          )}
-
-          <div className="w-full">
-            <form onSubmit={handleSignup}>
-              <div className="space-y-4">
-                <div>
-                  <h2 className="text-xl font-semibold">Create an Account</h2>
-                  <p className="text-sm opacity-70">
-                    Join Streamify and start your language learning adventure!
-                  </p>
-                </div>
-
-                <div className="space-y-3">
-                  {/* FULLNAME */}
-                  <div className="form-control w-full">
-                    <label className="label">
-                      <span className="label-text">Full Name</span>
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="John Doe"
-                      className="input input-bordered w-full"
-                      value={signupData.fullName}
-                      onChange={(e) => setSignupData({ ...signupData, fullName: e.target.value })}
-                      required
-                    />
-                  </div>
-                  {/* EMAIL */}
-                  <div className="form-control w-full">
-                    <label className="label">
-                      <span className="label-text">Email</span>
-                    </label>
-                    <input
-                      type="email"
-                      placeholder="john@gmail.com"
-                      className="input input-bordered w-full"
-                      value={signupData.email}
-                      onChange={(e) => setSignupData({ ...signupData, email: e.target.value })}
-                      required
-                    />
-                  </div>
-                  {/* PASSWORD */}
-                  <div className="form-control w-full">
-                    <label className="label">
-                      <span className="label-text">Password</span>
-                    </label>
-                    <input
-                      type="password"
-                      placeholder="********"
-                      className="input input-bordered w-full"
-                      value={signupData.password}
-                      onChange={(e) => setSignupData({ ...signupData, password: e.target.value })}
-                      required
-                    />
-                    <p className="text-xs opacity-70 mt-1">
-                      Password must be at least 6 characters long
-                    </p>
-                  </div>
-
-                  <div className="form-control">
-                    <label className="label cursor-pointer justify-start gap-2">
-                      <input type="checkbox" className="checkbox checkbox-sm" required />
-                      <span className="text-xs leading-tight">
-                        I agree to the{" "}
-                        <span className="text-primary hover:underline">terms of service</span> and{" "}
-                        <span className="text-primary hover:underline">privacy policy</span>
-                      </span>
-                    </label>
-                  </div>
-                </div>
-
-                <button className="btn btn-primary w-full" type="submit">
-                  {isPending ? (
-                    <>
-                      <span className="loading loading-spinner loading-xs"></span>
-                      Loading...
-                    </>
-                  ) : (
-                    "Create Account"
-                  )}
-                </button>
-
-                <div className="text-center mt-4">
-                  <p className="text-sm">
-                    Already have an account?{" "}
-                    <Link to="/login" className="text-primary hover:underline">
-                      Sign in
-                    </Link>
-                  </p>
-                </div>
+            <div className="space-y-6">
+              <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/8 px-4 py-2 text-xs uppercase tracking-[0.24em] text-neutral-content/80">
+                <HeartHandshakeIcon className="size-4" />
+                Start with warmth
               </div>
-            </form>
-          </div>
-        </div>
-
-        {/* SIGNUP FORM - RIGHT SIDE */}
-        <div className="hidden lg:flex w-full lg:w-1/2 bg-primary/10 items-center justify-center">
-          <div className="max-w-md p-8">
-            {/* Illustration */}
-            <div className="relative aspect-square max-w-sm mx-auto">
-              <img src="/i.png" alt="Language connection illustration" className="w-full h-full" />
-            </div>
-
-            <div className="text-center space-y-3 mt-6">
-              <h2 className="text-xl font-semibold">Connect with language partners worldwide</h2>
-              <p className="opacity-70">
-                Practice conversations, make friends, and improve your language skills together
+              <h1 className="font-display text-5xl leading-[1.05] text-neutral-content xl:text-6xl">
+                Find people who make practice feel natural, not forced.
+              </h1>
+              <p className="max-w-xl text-base leading-8 text-neutral-content/75">
+                Create your profile, share what you speak and what you’re learning, and we’ll shape
+                a more human network around those details.
               </p>
             </div>
+
+            <div className="rounded-[1.7rem] border border-white/10 bg-white/5 p-5 text-sm leading-7 text-neutral-content/75">
+              Less noise. Better introductions. Real-time conversation when you’re ready.
+            </div>
           </div>
-        </div>
+        </section>
+
+        <section className="auth-form-side">
+          <div className="mx-auto max-w-lg space-y-8">
+            <div className="lg:hidden">
+              <BrandMark />
+            </div>
+
+            <div className="space-y-3">
+              <p className="page-eyebrow">New account</p>
+              <h2 className="font-display text-4xl leading-tight">Create your Streamify identity</h2>
+              <p className="text-sm leading-7 text-base-content/65">
+                Build your first profile and step into a calmer social language app.
+              </p>
+            </div>
+
+            {error ? (
+              <div className="rounded-[1.4rem] border border-error/20 bg-error/10 px-4 py-4 text-sm text-error">
+                {error.response?.data?.message || "Could not create your account."}
+              </div>
+            ) : null}
+
+            <form onSubmit={handleSignup} className="space-y-5">
+              <div>
+                <label className="field-label">Full name</label>
+                <input
+                  type="text"
+                  placeholder="Your full name"
+                  className="soft-input"
+                  value={signupData.fullName}
+                  onChange={(e) => setSignupData({ ...signupData, fullName: e.target.value })}
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="field-label">Email</label>
+                <input
+                  type="email"
+                  placeholder="you@example.com"
+                  className="soft-input"
+                  value={signupData.email}
+                  onChange={(e) => setSignupData({ ...signupData, email: e.target.value })}
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="field-label">Password</label>
+                <input
+                  type="password"
+                  placeholder="Choose a secure password"
+                  className="soft-input"
+                  value={signupData.password}
+                  onChange={(e) => setSignupData({ ...signupData, password: e.target.value })}
+                  required
+                />
+                <p className="mt-2 text-sm text-base-content/55">
+                  Use at least 6 characters so your account is ready for long-term use.
+                </p>
+              </div>
+
+              <label className="editorial-card flex cursor-pointer items-start gap-3 px-4 py-4 text-sm text-base-content/70">
+                <input type="checkbox" className="checkbox checkbox-sm mt-1" required />
+                <span>
+                  I agree to the terms of service and privacy policy so Streamify can create and
+                  protect my account.
+                </span>
+              </label>
+
+              <button className="btn btn-primary w-full rounded-full" type="submit" disabled={isPending}>
+                {isPending ? (
+                  <>
+                    <span className="loading loading-spinner loading-xs" />
+                    Creating your space...
+                  </>
+                ) : (
+                  <>
+                    <SparklesIcon className="size-4" />
+                    Create account
+                  </>
+                )}
+              </button>
+            </form>
+
+            <p className="text-sm text-base-content/65">
+              Already have an account?{" "}
+              <Link to="/login" className="font-semibold text-primary hover:underline">
+                Sign in
+              </Link>
+            </p>
+          </div>
+        </section>
       </div>
     </div>
   );

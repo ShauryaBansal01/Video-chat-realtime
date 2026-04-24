@@ -1,52 +1,47 @@
+import { MessageCircleIcon, SparklesIcon } from "lucide-react";
 import { Link } from "react-router";
-import { LANGUAGE_TO_FLAG } from "../constants";
+import { getLanguageFlag } from "../lib/getLanguageFlag.jsx";
 
 const FriendCard = ({ friend }) => {
   return (
-    <div className="card bg-base-200 hover:shadow-md transition-shadow">
-      <div className="card-body p-4">
-        {/* USER INFO */}
-        <div className="flex items-center gap-3 mb-3">
-          <div className="avatar size-12">
+    <div className="editorial-card group h-full p-5 transition-transform duration-300 hover:-translate-y-1">
+      <div className="flex h-full flex-col gap-4">
+        <div className="flex items-start gap-4">
+          <div className="avatar size-14 shrink-0">
             <img src={friend.profilePic} alt={friend.fullName} />
           </div>
-          <h3 className="font-semibold truncate">{friend.fullName}</h3>
+          <div className="min-w-0">
+            <h3 className="truncate font-display text-2xl">{friend.fullName}</h3>
+            <p className="mt-1 text-sm text-base-content/60">
+              Ready for your next practice session.
+            </p>
+          </div>
         </div>
 
-        <div className="flex flex-wrap gap-1.5 mb-3">
-          <span className="badge badge-secondary text-xs">
+        <div className="flex flex-wrap gap-2">
+          <span className="pill-badge">
             {getLanguageFlag(friend.nativeLanguage)}
             Native: {friend.nativeLanguage}
           </span>
-          <span className="badge badge-outline text-xs">
+          <span className="pill-badge">
             {getLanguageFlag(friend.learningLanguage)}
             Learning: {friend.learningLanguage}
           </span>
         </div>
 
-        <Link to={`/chat/${friend._id}`} className="btn btn-outline w-full">
-          Message
-        </Link>
+        <div className="mt-auto flex items-center justify-between gap-3">
+          <div className="hidden items-center gap-2 text-xs uppercase tracking-[0.22em] text-base-content/50 sm:flex">
+            <SparklesIcon className="size-4 text-accent" />
+            Active match
+          </div>
+          <Link to={`/chat/${friend._id}`} className="btn btn-primary ml-auto rounded-full px-5">
+            <MessageCircleIcon className="size-4" />
+            Message
+          </Link>
+        </div>
       </div>
     </div>
   );
 };
+
 export default FriendCard;
-
-export function getLanguageFlag(language) {
-  if (!language) return null;
-
-  const langLower = language.toLowerCase();
-  const countryCode = LANGUAGE_TO_FLAG[langLower];
-
-  if (countryCode) {
-    return (
-      <img
-        src={`https://flagcdn.com/24x18/${countryCode}.png`}
-        alt={`${langLower} flag`}
-        className="h-3 mr-1 inline-block"
-      />
-    );
-  }
-  return null;
-}

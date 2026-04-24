@@ -1,18 +1,27 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
+import { Link } from "react-router";
+import {
+  CheckCircleIcon,
+  CompassIcon,
+  MapPinIcon,
+  SparklesIcon,
+  UserPlusIcon,
+  UsersIcon,
+} from "lucide-react";
 import {
   getOutgoingFriendReqs,
   getRecommendedUsers,
   getUserFriends,
   sendFriendRequest,
 } from "../lib/api";
-import { Link } from "react-router";
-import { CheckCircleIcon, MapPinIcon, UserPlusIcon, UsersIcon } from "lucide-react";
-
 import { capitialize } from "../lib/utils";
-
-import FriendCard, { getLanguageFlag } from "../components/FriendCard";
+import { getLanguageFlag } from "../lib/getLanguageFlag.jsx";
+import FriendCard from "../components/FriendCard";
 import NoFriendsFound from "../components/NoFriendsFound";
+import PageShell from "../components/PageShell";
+import SectionHeader from "../components/SectionHeader";
+import EmptyState from "../components/EmptyState";
 
 const HomePage = () => {
   const queryClient = useQueryClient();
@@ -28,7 +37,7 @@ const HomePage = () => {
     queryFn: getRecommendedUsers,
   });
 
-  const { data: outgoingFriendReqs } = useQuery({
+  const { data: outgoingFriendReqs = [] } = useQuery({
     queryKey: ["outgoingFriendReqs"],
     queryFn: getOutgoingFriendReqs,
   });
@@ -40,132 +49,155 @@ const HomePage = () => {
 
   useEffect(() => {
     const outgoingIds = new Set();
-    if (outgoingFriendReqs && outgoingFriendReqs.length > 0) {
-      outgoingFriendReqs.forEach((req) => {
-        outgoingIds.add(req.recipient._id);
-      });
-      setOutgoingRequestsIds(outgoingIds);
-    }
+    outgoingFriendReqs.forEach((req) => {
+      outgoingIds.add(req.recipient._id);
+    });
+    setOutgoingRequestsIds(outgoingIds);
   }, [outgoingFriendReqs]);
 
+  const metrics = [
+    { label: "Friends", value: friends.length },
+    { label: "Matches waiting", value: recommendedUsers.length },
+    { label: "Requests sent", value: outgoingRequestsIds.size },
+  ];
+
   return (
-    <div className="p-4 sm:p-6 lg:p-8">
-      <div className="container mx-auto space-y-10">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">Your Friends</h2>
-          <Link to="/notifications" className="btn btn-outline btn-sm">
-            <UsersIcon className="mr-2 size-4" />
-            Friend Requests
-          </Link>
-        </div>
+    <PageShell
+      eyebrow="Editorial home"
+      title="Build a practice circle that actually feels alive."
+      description="Move between your existing language partners and new recommendations without the generic dashboard feel. This space is shaped around warm introductions, thoughtful discovery, and quick conversation starts."
+      actions={
+        <Link to="/notifications" className="btn btn-primary rounded-full px-6">
+          <UsersIcon className="size-4" />
+          Review requests
+        </Link>
+      }
+    >
+      <section className="grid gap-4 md:grid-cols-3">
+        {metrics.map((metric) => (
+          <div key={metric.label} className="metric-card">
+            <span className="metric-label">{metric.label}</span>
+            <span className="metric-value">{metric.value}</span>
+            <p className="text-sm leading-6 text-base-content/62">
+              {metric.label === "Friends"
+                ? "People you can message right away."
+                : metric.label === "Matches waiting"
+                  ? "Fresh recommendations based on your profile."
+                  : "Open invitations already in motion."}
+            </p>
+          </div>
+        ))}
+      </section>
+
+      <section className="space-y-6">
+        <SectionHeader
+          eyebrow="Your circle"
+          title="Friends ready for conversation"
+          description="These are the people already in your orbit. Jump back into a message whenever you want to practice."
+        />
 
         {loadingFriends ? (
-          <div className="flex justify-center py-12">
-            <span className="loading loading-spinner loading-lg" />
+          <div className="editorial-card flex justify-center px-6 py-12">
+            <span className="loading loading-spinner loading-lg text-primary" />
           </div>
         ) : friends.length === 0 ? (
           <NoFriendsFound />
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
             {friends.map((friend) => (
               <FriendCard key={friend._id} friend={friend} />
             ))}
           </div>
         )}
+      </section>
 
-        <section>
-          <div className="mb-6 sm:mb-8">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <div>
-                <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">Meet New Learners</h2>
-                <p className="opacity-70">
-                  Discover perfect language exchange partners based on your profile
-                </p>
-              </div>
+      <section className="space-y-6">
+        <SectionHeader
+          eyebrow="Discovery"
+          title="Recommended language partners"
+          description="A warmer way to meet people aligned with your native language, goals, and location."
+          action={
+            <div className="pill-badge">
+              <CompassIcon className="size-4 text-secondary" />
+              Curated by profile fit
             </div>
+          }
+        />
+
+        {loadingUsers ? (
+          <div className="editorial-card flex justify-center px-6 py-12">
+            <span className="loading loading-spinner loading-lg text-primary" />
           </div>
+        ) : recommendedUsers.length === 0 ? (
+          <EmptyState
+            icon={SparklesIcon}
+            title="No fresh matches yet"
+            description="We’ll surface more language partners as your network grows and more learners join your route."
+          />
+        ) : (
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 xl:grid-cols-3">
+            {recommendedUsers.map((user) => {
+              const hasRequestBeenSent = outgoingRequestsIds.has(user._id);
 
-          {loadingUsers ? (
-            <div className="flex justify-center py-12">
-              <span className="loading loading-spinner loading-lg" />
-            </div>
-          ) : recommendedUsers.length === 0 ? (
-            <div className="card bg-base-200 p-6 text-center">
-              <h3 className="font-semibold text-lg mb-2">No recommendations available</h3>
-              <p className="text-base-content opacity-70">
-                Check back later for new language partners!
-              </p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {recommendedUsers.map((user) => {
-                const hasRequestBeenSent = outgoingRequestsIds.has(user._id);
+              return (
+                <article key={user._id} className="editorial-card flex flex-col gap-5 p-6">
+                  <div className="flex items-start gap-4">
+                    <div className="avatar size-16 shrink-0 rounded-full">
+                      <img src={user.profilePic} alt={user.fullName} />
+                    </div>
 
-                return (
-                  <div
-                    key={user._id}
-                    className="card bg-base-200 hover:shadow-lg transition-all duration-300"
-                  >
-                    <div className="card-body p-5 space-y-4">
-                      <div className="flex items-center gap-3">
-                        <div className="avatar size-16 rounded-full">
-                          <img src={user.profilePic} alt={user.fullName} />
+                    <div className="min-w-0">
+                      <h3 className="truncate font-display text-3xl leading-none">{user.fullName}</h3>
+                      {user.location ? (
+                        <div className="mt-2 flex items-center text-sm text-base-content/60">
+                          <MapPinIcon className="mr-2 size-4 text-secondary" />
+                          {user.location}
                         </div>
-
-                        <div>
-                          <h3 className="font-semibold text-lg">{user.fullName}</h3>
-                          {user.location && (
-                            <div className="flex items-center text-xs opacity-70 mt-1">
-                              <MapPinIcon className="size-3 mr-1" />
-                              {user.location}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-
-                      {/* Languages with flags */}
-                      <div className="flex flex-wrap gap-1.5">
-                        <span className="badge badge-secondary">
-                          {getLanguageFlag(user.nativeLanguage)}
-                          Native: {capitialize(user.nativeLanguage)}
-                        </span>
-                        <span className="badge badge-outline">
-                          {getLanguageFlag(user.learningLanguage)}
-                          Learning: {capitialize(user.learningLanguage)}
-                        </span>
-                      </div>
-
-                      {user.bio && <p className="text-sm opacity-70">{user.bio}</p>}
-
-                      {/* Action button */}
-                      <button
-                        className={`btn w-full mt-2 ${
-                          hasRequestBeenSent ? "btn-disabled" : "btn-primary"
-                        } `}
-                        onClick={() => sendRequestMutation(user._id)}
-                        disabled={hasRequestBeenSent || isPending}
-                      >
-                        {hasRequestBeenSent ? (
-                          <>
-                            <CheckCircleIcon className="size-4 mr-2" />
-                            Request Sent
-                          </>
-                        ) : (
-                          <>
-                            <UserPlusIcon className="size-4 mr-2" />
-                            Send Friend Request
-                          </>
-                        )}
-                      </button>
+                      ) : null}
                     </div>
                   </div>
-                );
-              })}
-            </div>
-          )}
-        </section>
-      </div>
-    </div>
+
+                  <div className="flex flex-wrap gap-2">
+                    <span className="pill-badge">
+                      {getLanguageFlag(user.nativeLanguage)}
+                      Native: {capitialize(user.nativeLanguage)}
+                    </span>
+                    <span className="pill-badge">
+                      {getLanguageFlag(user.learningLanguage)}
+                      Learning: {capitialize(user.learningLanguage)}
+                    </span>
+                  </div>
+
+                  <p className="min-h-16 text-sm leading-7 text-base-content/68">
+                    {user.bio || "Open to conversations, cultural exchange, and steady language practice."}
+                  </p>
+
+                  <button
+                    className={`btn mt-auto w-full rounded-full ${
+                      hasRequestBeenSent ? "btn-disabled border-none bg-base-200" : "btn-primary"
+                    }`}
+                    onClick={() => sendRequestMutation(user._id)}
+                    disabled={hasRequestBeenSent || isPending}
+                  >
+                    {hasRequestBeenSent ? (
+                      <>
+                        <CheckCircleIcon className="size-4" />
+                        Request sent
+                      </>
+                    ) : (
+                      <>
+                        <UserPlusIcon className="size-4" />
+                        Invite to connect
+                      </>
+                    )}
+                  </button>
+                </article>
+              );
+            })}
+          </div>
+        )}
+      </section>
+    </PageShell>
   );
 };
 
